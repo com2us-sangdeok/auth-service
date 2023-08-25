@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { createNamespace, getNamespace, Namespace } from 'cls-hooked';
-import { isNullOrUndefined } from 'util';
-import { RequestContext } from '../commom/context/request.context';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
+import { RequestContext } from '../commom/context/request.context';
 
 @Injectable()
 export class AxiosClientUtil {
@@ -19,7 +18,7 @@ export class AxiosClientUtil {
     url: string,
     headerOpts?: any,
   ): Promise<AxiosResponseDto<any>> {
-    let headers = this.setHeaderData(headerOpts);
+    const headers = this.setHeaderData(headerOpts);
     try {
       const response = await firstValueFrom(
         this.httpService.get(url, { headers: headers }),
@@ -32,7 +31,7 @@ export class AxiosClientUtil {
   }
 
   public async post(url: string, data?: any, headerOpts?: any): Promise<any> {
-    let headers = this.setHeaderData(headerOpts);
+    const headers = this.setHeaderData(headerOpts);
     try {
       const response = await firstValueFrom(
         this.httpService.post(url, data, { headers: headers }),
@@ -45,7 +44,7 @@ export class AxiosClientUtil {
   }
 
   public async put(url: string, data?: any, headerOpts?: any): Promise<any> {
-    let headers = this.setHeaderData(headerOpts);
+    const headers = this.setHeaderData(headerOpts);
     try {
       const response = await firstValueFrom(
         this.httpService.put(url, data, { headers: headers }),
@@ -58,7 +57,7 @@ export class AxiosClientUtil {
   }
 
   public async patch(url: string, data?: any, headerOpts?: any): Promise<any> {
-    let headers = this.setHeaderData(headerOpts);
+    const headers = this.setHeaderData(headerOpts);
     try {
       const response = await firstValueFrom(
         this.httpService.patch(url, data, { headers: headers }),
@@ -71,11 +70,12 @@ export class AxiosClientUtil {
   }
 
   private setHeaderData(headerOptions: any): any {
-    let correlationId =
+    const correlationId =
       this.namespace.get(RequestContext.CORRELATION_ID) ??
       RequestContext.uniqueKeyGenerator();
-    let header = {
+    const header = {
       'Content-Type': 'application/json',
+      'Accept-Encoding': 'gzip,deflate,compress',
       correlationId: correlationId,
     };
     Object.assign(header, headerOptions);

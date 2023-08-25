@@ -14,8 +14,10 @@ export class LoggerMiddleware implements NestMiddleware {
       const { statusCode } = res;
       this.logger.log(
         `${RequestContext.get(
+          RequestContext.REQUEST_ID,
+        )} ${method} ${originalUrl} ${statusCode} ${ip} ${userAgent} ${RequestContext.get(
           RequestContext.CORRELATION_ID,
-        )} ${method} ${originalUrl} ${statusCode} ${ip} ${userAgent}`,
+        )}`,
       );
     });
     next();

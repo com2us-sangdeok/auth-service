@@ -7,10 +7,12 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { WINSTON_MODULE_NEST_PROVIDER, WinstonModule } from 'nest-winston';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import {DocumentBuilder, SwaggerDocumentOptions, SwaggerModule} from '@nestjs/swagger';
 import { getLogFormat, logLevel } from './commom/logger/winston.config';
 import * as winston from 'winston';
 import { HttpExceptionFilter } from './filter/http-exception.filter';
+import {AuthModule} from "./auth/auth.module";
+import {UserModule} from "./user/user.module";
 
 /*
   todo:
@@ -41,7 +43,7 @@ async function bootstrap() {
     }),
   );
 
-  app.setGlobalPrefix(configService.get('SWAGGER_PREFIX'));
+  app.setGlobalPrefix(configService.get('APP_ROOT_PREFIX'));
   app.enableVersioning({
     type: VersioningType.URI,
     //fixme: default 설정으로 모든 contoller 버전 컨트롤
@@ -49,14 +51,20 @@ async function bootstrap() {
     // defaultVersion: '2',
   });
 
-  const swaggerOptions = new DocumentBuilder()
+  const config = new DocumentBuilder()
     .setTitle(configService.get('SWAGGER_TITLE'))
     .setDescription(configService.get('SWAGGER_DESC'))
     .setVersion(configService.get('SWAGGER_VERSION'))
     // .addTag('blockchain')
-    // .addBearerAuth()
+    .addBearerAuth()
     .build();
-  const document = SwaggerModule.createDocument(app, swaggerOptions);
+
+  const option: SwaggerDocumentOptions = {
+    include: [AuthModule, UserModule],
+    deepScanRoutes: false
+  }
+
+  const document = SwaggerModule.createDocument(app, config, option);
   SwaggerModule.setup(configService.get('SWAGGER_PATH'), app, document);
 
   await app.listen(configService.get('APP_PORT'));

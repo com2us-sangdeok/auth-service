@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get} from '@nestjs/common';
 import { AppService } from './app.service';
 import {
   HealthCheck,
@@ -14,12 +14,16 @@ export class AppController {
     private http: HttpHealthIndicator,
   ) {}
 
+  @Get()
+  getHello(): string {
+    return this.appService.getHello();
+  }
+
   @Get('health')
   @HealthCheck()
   check() {
     return this.health.check([
-      () => this.http.pingCheck('blockchain-api', 'http://localhost:3000'),
+      () => this.http.pingCheck('auth-api', 'http://localhost:3000/'),
     ]);
   }
-
 }

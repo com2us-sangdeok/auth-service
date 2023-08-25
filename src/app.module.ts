@@ -18,11 +18,14 @@ import {
 import { LoggerMiddleware } from './middleware/logger.middleware';
 import DatabaseLogger from './commom/logger/database.logger';
 import { RequestContextMiddleware } from './middleware/request-context.middleware';
-import {
-  UserEntity,
-} from './entities';
-import {AuthModule} from "./auth/auth.module";
-import {UserModule} from "./user/user.module";
+import { UserEntity } from './entities';
+import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
+import { KeyEntity } from './entities/key.entity';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { ResponseInterceptor } from './interceptor/response.interceptor';
+import { ServiceEntity } from './entities/service.entity';
+import { UserServiceOperationEntity } from './entities/user-service-operation.entity';
 
 @Module({
   imports: [
@@ -50,6 +53,9 @@ import {UserModule} from "./user/user.module";
           database: configService.get('DB_DATABASE'),
           entities: [
             UserEntity,
+            ServiceEntity,
+            UserServiceOperationEntity,
+            KeyEntity,
           ],
           // synchronize: true,
           synchronize: configService.get('DB_SYNCHRONIZE') === 'true',
@@ -60,10 +66,16 @@ import {UserModule} from "./user/user.module";
       inject: [ConfigService],
     }),
     AuthModule,
-    UserModule
+    UserModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ResponseInterceptor,
+    },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

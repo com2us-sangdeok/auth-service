@@ -6,7 +6,6 @@ import {
   HttpStatus,
   Logger,
 } from '@nestjs/common';
-import { ServerException } from '../exception/server.exception';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -15,25 +14,25 @@ export class HttpExceptionFilter implements ExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
-    // const request = ctx.getRequest();
+    this.logger.error(exception);
 
     const httpStatus =
-      exception instanceof ServerException
-        ? HttpStatus.INTERNAL_SERVER_ERROR
-        : exception?.getStatus() ?? 500;
+      exception instanceof HttpException
+        ? exception.getStatus()
+        : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    const code = exception?.getStatus()
-      ? exception.getStatus()
-      : HttpStatus.INTERNAL_SERVER_ERROR;
+    const res: any = exception.getResponse();
 
     const errorResponse = {
-      code: code,
-      message: exception.message
-        ? exception.message || null
-        : 'Internal server error',
+      code: httpStatus,
+      error: res.error ?? getError(httpStatus) ?? 'INTERNAL_SERVER_ERROR',
+      message: res.message ?? exception.message ?? 'internal server error',
     };
 
-    this.logger.error(errorResponse);
     response.status(httpStatus).json(errorResponse);
   }
 }
+
+const getError = (status: number) => {
+  return Object.keys(HttpStatus).filter((key) => HttpStatus[key] === status)[0];
+};

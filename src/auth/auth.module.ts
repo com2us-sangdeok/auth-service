@@ -1,51 +1,31 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { WinstonModule } from 'nest-winston';
-import { HttpModule } from '@nestjs/axios';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AxiosClientUtil } from '../util/axios-client.util';
-import {
-  UserEntity,
-} from '../entities';
-import {V1AuthController} from "./v1/v1.auth.controller";
-import {V1AuthService} from "./v1/v1.auth.service";
-import {AuthRepository} from "./v1/repository/auth.repository";
-import {LocalStrategy} from "./strategies/local.strategy";
-import {JwtStrategy} from "./strategies/jwt.strategy";
-import {UserModule} from "../user/user.module";
-import {PassportModule} from "@nestjs/passport";
-import {jwtConstants} from "./constants";
-import {JwtModule} from "@nestjs/jwt";
-import {V1UserService} from "../user/v1/v1.user.service";
+import { AuthV1Controller } from './v1/auth.v1.controller';
+import { AuthV1Service } from './v1/auth.v1.service';
+import { LocalStrategy } from './strategies/local.strategy';
+import { JwtStrategy } from './strategies/jwt.strategy';
+import { UserModule } from '../user/user.module';
+import { PassportModule } from '@nestjs/passport';
+import { JwtModule } from '@nestjs/jwt';
+import { RefreshJwtStrategy } from './strategies/refresh-jwt.strategy';
+import { APP_GUARD } from '@nestjs/core';
+import { RolesGuard } from './guards/roles.guard';
+import { LruCacheUtil } from '../util/lru-cache-util';
 
 @Module({
-  imports: [
-    WinstonModule,
-    HttpModule.registerAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        timeout: configService.get('HTTP_TIMEOUT'),
-        // maxRedirects: configService.get('HTTP_MAX_REDIRECTS'),
-      }),
-      inject: [ConfigService],
-    }),
-    UserModule,
-    PassportModule,
-    JwtModule.register({
-      secret: jwtConstants.secret,
-      signOptions: { expiresIn: '60s' },
-    }),
-  ],
-  controllers: [
-    V1AuthController,
-  ],
+  imports: [WinstonModule, UserModule, PassportModule, JwtModule.register({})],
+  controllers: [AuthV1Controller],
   providers: [
-    V1AuthService,
-    // V1UserService,
-    AxiosClientUtil,
-    // AuthRepository,
+    AuthV1Service,
     LocalStrategy,
+    JwtStrategy,
+    RefreshJwtStrategy,
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: RolesGuard,
+    // },
+    LruCacheUtil,
   ],
-  exports: [V1AuthService]
+  exports: [AuthV1Service],
 })
 export class AuthModule {}

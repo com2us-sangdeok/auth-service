@@ -1,9 +1,12 @@
-export const randomString = () => {
-  return Array(32)
-    .fill(null)
-    .map(() => Math.round(Math.random() * 16).toString(16))
-    .join('');
-};
+// export const randomString = () => {
+//   return Array(32)
+//     .fill(null)
+//     .map(() => Math.round(Math.random() * 16).toString(16))
+//     .join('');
+// };
+
+import * as argon2 from "argon2";
+import {ForbiddenException} from "@nestjs/common";
 
 export const customUuid = () => {
   let date = new Date().getTime();
@@ -29,3 +32,20 @@ export const compareObject = (obj1, obj2) => {
   }
   return false;
 };
+
+export const isValidAddress = (address) => {
+  return /(xpla1[a-z0-9]{38})/g.test(address);
+}
+
+
+export const randomString = (size: number, encode: string) => {
+  return require('crypto').randomBytes(size).toString(encode)
+}
+
+export const hashData = (data: string) => {
+  return argon2.hash(data);
+}
+
+export const argonVerify = async (hash: string, plain: string | Buffer) => {
+  return await argon2.verify(hash, plain);
+}

@@ -15,14 +15,8 @@ export class RequestContextMiddleware implements NestMiddleware {
     namespace.run(() => {
       namespace.set(RequestContext.REQUEST_ID, reqContext.id);
       res.setHeader(RequestContext.REQUEST_ID, reqContext.id);
-
-      if (
-        !(
-          reqContext.request.get('correlationId') === null ||
-          reqContext.request.get('correlationId') === undefined ||
-          reqContext.request.get('correlationId').length === 0
-        )
-      ) {
+      const correlationId = reqContext.request.get('correlationId') ?? false;
+      if (correlationId) {
         namespace.set(
           RequestContext.CORRELATION_ID,
           reqContext.request.get('correlationId'),
