@@ -18,8 +18,14 @@ export class UserEntity {
   @PrimaryGeneratedColumn('increment', { name: 'user_no' })
   userNo: number;
 
+  @Column({ name: 'company', type: 'int' })
+  company: number;
+
   @Column({ name: 'id', type: 'varchar' })
   id: string;
+
+  @Column({ name: 'secret_key_plaintext', type: 'varchar', length: 100 })
+  secretKeyPlainText: string;
 
   @Column({ name: 'secret_key', type: 'varchar', length: 100 })
   secretKey: string;
@@ -35,16 +41,16 @@ export class UserEntity {
 
   @CreateDateColumn({
     name: 'created_at',
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP(6)',
+    type: 'datetime',
+    default: () => 'CURRENT_TIMESTAMP',
   })
   createdAt: Date;
 
   @UpdateDateColumn({
     name: 'updated_at',
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP(6)',
-    onUpdate: 'CURRENT_TIMESTAMP(6)',
+    type: 'datetime',
+    default: () => 'CURRENT_TIMESTAMP',
+    onUpdate: 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;
 }

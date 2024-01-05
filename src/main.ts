@@ -7,12 +7,17 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { WINSTON_MODULE_NEST_PROVIDER, WinstonModule } from 'nest-winston';
-import {DocumentBuilder, SwaggerDocumentOptions, SwaggerModule} from '@nestjs/swagger';
+import {
+  DocumentBuilder,
+  SwaggerDocumentOptions,
+  SwaggerModule,
+} from '@nestjs/swagger';
 import { getLogFormat, logLevel } from './commom/logger/winston.config';
 import * as winston from 'winston';
 import { HttpExceptionFilter } from './filter/http-exception.filter';
-import {AuthModule} from "./auth/auth.module";
-import {UserModule} from "./user/user.module";
+import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
+import { CompanyModule } from './company/company.module';
 
 /*
   todo:
@@ -61,8 +66,8 @@ async function bootstrap() {
 
   const option: SwaggerDocumentOptions = {
     include: [AuthModule, UserModule],
-    deepScanRoutes: false
-  }
+    deepScanRoutes: false,
+  };
 
   const document = SwaggerModule.createDocument(app, config, option);
   SwaggerModule.setup(configService.get('SWAGGER_PATH'), app, document);

@@ -26,6 +26,8 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseInterceptor } from './interceptor/response.interceptor';
 import { ServiceEntity } from './entities/service.entity';
 import { UserServiceOperationEntity } from './entities/user-service-operation.entity';
+import { CompanyModule } from './company/company.module';
+import { CredentialsEntity } from './entities/credentials.entity';
 
 @Module({
   imports: [
@@ -56,6 +58,7 @@ import { UserServiceOperationEntity } from './entities/user-service-operation.en
             ServiceEntity,
             UserServiceOperationEntity,
             KeyEntity,
+            CredentialsEntity,
           ],
           // synchronize: true,
           synchronize: configService.get('DB_SYNCHRONIZE') === 'true',
@@ -67,6 +70,7 @@ import { UserServiceOperationEntity } from './entities/user-service-operation.en
     }),
     AuthModule,
     UserModule,
+    CompanyModule,
   ],
   controllers: [AppController],
   providers: [

@@ -10,7 +10,7 @@ export enum OperationType {
 
 export enum CloudType {
   Aws = 'AWS',
-  Gcp = 'Gcp',
+  Gcp = 'GCP',
   Azure = 'AZURE',
   Naver = 'NAVER',
 }

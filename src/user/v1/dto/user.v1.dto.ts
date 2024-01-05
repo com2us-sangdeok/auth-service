@@ -102,7 +102,7 @@ export class V1UpdateApiKeyDto {
   secretKey: string;
 }
 
-export class V1RegistUserDto extends UserV1Dto {
+export class V1RegisterUserDto extends UserV1Dto {
   address: string;
   secretKey: string;
 }

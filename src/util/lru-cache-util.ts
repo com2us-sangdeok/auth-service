@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-
-const LRU = require('lru-cache');
+import { LRUCache } from 'lru-cache';
 
 @Injectable()
 export class LruCacheUtil {
@@ -9,18 +8,18 @@ export class LruCacheUtil {
 
   constructor(private configService: ConfigService) {
     const options = {
-      // max: parseInt(configService.get('CACHE_MAX')),
+      max: parseInt(configService.get('CACHE_MAX')),
 
       // for use with tracking overall storage size
-      // maxSize: parseInt(configService.get('CACHE_MAX_SIZE')),
+      maxSize: parseInt(configService.get('CACHE_MAX_SIZE')),
       // sizeCalculation: (value, key) => {
-      //   return 1
+      //   return 1;
       // },
 
       // for use when you need to clean up something when objects
       // are evicted from the cache
       dispose: (value, key) => {
-        // freeFromMemoryOrWhatever(value)
+        // freeFromMemoryOrWhatever(value);
         console.log(`dispose key: ${key}  /  value: ${value}`);
       },
 
@@ -35,9 +34,9 @@ export class LruCacheUtil {
 
       // async method to use for cache.fetch(), for
       // stale-while-revalidate type of behavior
-      fetchMethod: async (key, staleValue, { options, signal }) => {},
+      fetchMethod: async (key, staleValue, { options, signal, context }) => {},
     };
-    this.cache = new LRU(options);
+    this.cache = new LRUCache(options);
   }
 
   public set(key: any, value: any) {

@@ -22,6 +22,7 @@ export class AuthV1Service {
   async authToken(requestDto: any) {
     const user = await this.userService.getUser(requestDto.id);
     const payload = {
+      number: user.userNo,
       id: user.id,
       role: user.role,
       tenantId: user.tenantId,
@@ -42,6 +43,7 @@ export class AuthV1Service {
     await this.verifyHashedData(user.refreshToken, refreshToken);
 
     const payload = {
+      number: user.userNo,
       id: user.id,
       role: user.role,
       tenantId: user.tenantId,

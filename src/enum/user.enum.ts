@@ -22,6 +22,7 @@ export enum UserHttpStatus {
   Created = 'CREATED',
   BadRequest = 'BAD_REQUEST',
   UserNotFound = 'USER_NOT_FOUND',
+  DuplicateService = 'DUPLICATE_SERVICE',
   InternalServerError = 'INTERNAL_SERVER_ERROR',
   ExternalServerError = 'EXTERNAL_SERVER_ERROR',
   InvalidAddress = 'INVALID_ADDRESS',
